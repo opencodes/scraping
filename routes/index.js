@@ -2,34 +2,24 @@
 /*
  * GET home page.
  */
-var request = require('request'),
-	jsdom = require('jsdom');
+var request = require('request');//jsdom = require('jsdom');
+var fs     = require('fs');
+var jquery = fs.readFileSync("./public/javascripts/jquery.min.js").toString();
 
 exports.index = function(req, res){
-		
-		var url = 'http://rkjha.com';
-		// holder for results
-		var out = {
-		  'streets': []
-		};
-		
 		jsdom.env({
-		  html: url,
-		  scripts: [
-		    'http://code.jquery.com/jquery.js'
+		  html: 'http://rkjha.com/',
+		  src: [
+		    jquery
 		  ],
 		  done: function(errors, window) {
 		    var $ = window.$;
-		    // find all the html links to the street zip files
-		    $('a').each(function(idx, elem) {
-		    	console.log($(this).attr('href'));
-		      // push the url (href attribute) onto the list
-		      out['streets'].push( $(this).attr('href') );
+		    var links = [];
+		    $('a').each(function(){
+		      console.log( $(this).attr('href') );
+		      links.push( $(this).attr('href'));
 		    });
-		    console.log(out);
-			res.render('index', { title: 'Express',data:out['streets']});
+		    res.render('index', { title: 'Express',data:links});
 		  }
 		});
-		
-	
 };
