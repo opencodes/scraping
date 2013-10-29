@@ -27,7 +27,7 @@ exports.index = function(req, res){
 		    });
 		  }
 		});
-
+		console.log(out);
 		res.render('index', { title: 'Express',data:out['streets']});
 	
 };
