@@ -11,8 +11,8 @@ exports.index = function(req, res){
 	        $('a.title').each(function(title) {
 	            stories.push(title.text);
 	        });
-	        this.emit(stories);
+	        console.log(stories);
 	    });
 	});
-	res.render('index', { title: 'Express' });
+	res.render('index', { title: 'Express',data : stories });
 };
