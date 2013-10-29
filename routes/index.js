@@ -22,6 +22,7 @@ exports.index = function(req, res){
 		    var $ = window.$;
 		    // find all the html links to the street zip files
 		    $('a').each(function(idx, elem) {
+		    	console.log($(this).attr('href'));
 		      // push the url (href attribute) onto the list
 		      out['streets'].push( $(this).attr('href') );
 		    });
