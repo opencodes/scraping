@@ -2,7 +2,8 @@
 /*
  * GET home page.
  */
-var request = require('request');//jsdom = require('jsdom');
+var request = require('request')
+	jsdom = require('jsdom');
 var fs     = require('fs');
 var jquery = fs.readFileSync("./public/javascripts/jquery.min.js").toString();
 
