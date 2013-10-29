@@ -11,7 +11,7 @@ exports.index = function(req, res){
 	        $('a').each(function(title) {
 	            stories.push($(this).attr('href'));
 	        });
-	        console.log(stories);
+	        console.log(err);console.log($);
 	        res.render('index', { title: 'Express',data : stories });
 	    });
 	});
