@@ -10,5 +10,8 @@
     <input type="text" name="url" />
     <input type="submit" />
     </form>
+    <% for (var k in data) { %>
+			<h5><%= data[k].name %> :: <%= data[k].content %></h5>
+	<% } %>
   </body>
 </html>
