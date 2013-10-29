@@ -6,7 +6,6 @@ var request = require('request'),
 	jsdom = require('jsdom');
 
 exports.index = function(req, res){
-	nodeio.scrape(function() {
 		
 
 		request({ uri:'http://www.google.com' }, function (error, response, body) {
@@ -27,6 +26,5 @@ exports.index = function(req, res){
 		  });
 		});
 		res.render('index', { title: 'Express',data : stories });
-	});
 	
 };
