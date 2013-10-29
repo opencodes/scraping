@@ -6,7 +6,7 @@ var nodeio = require('node.io');
 
 exports.index = function(req, res){
 	nodeio.scrape(function() {
-	    this.getHtml('http://www.bevinco.com', function(err, $) {
+	    this.getHtml('http://www.rkjha.com', function(err, $) {
 	        var stories = [];
 	        $('a').each(function(title) {
 	            stories.push($(this).attr('href'));
