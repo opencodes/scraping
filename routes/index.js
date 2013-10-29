@@ -7,24 +7,27 @@ var request = require('request'),
 
 exports.index = function(req, res){
 		
-
-		request({ uri:'http://www.google.com' }, function (error, response, body) {
-		  if (error && response.statusCode !== 200) {
-		    console.log('Error when contacting google.com');
-		  }
-		  
-		  jsdom.env({
-		    html: body,
-		    scripts: [
-		      'http://code.jquery.com/jquery-1.5.min.js'
-		    ]
-		  }, function (err, window) {
-		    var $ = window.jQuery;
+		var url = 'http://police.uk/data';
+		// holder for results
+		var out = {
+		  'streets': []
+		};
 		
-		    // jQuery is now loaded on the jsdom window created from 'agent.body'
-		    console.log($('body').html());
-		  });
+		jsdom.env({
+		  html: url,
+		  scripts: [
+		    'http://code.jquery.com/jquery.js'
+		  ],
+		  done: function(errors, window) {
+		    var $ = window.$;
+		    // find all the html links to the street zip files
+		    $('#downloads .months table tr td:nth-child(2) a').each(function(idx, elem) {
+		      // push the url (href attribute) onto the list
+		      out['streets'].push( $(elem).attr('href') );
+		    });
+		  }
 		});
-		res.render('index', { title: 'Express',data : stories });
+
+		res.render('index', { title: 'Express'});
 	
 };
