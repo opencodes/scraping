@@ -7,7 +7,7 @@ var request = require('request'),
 
 exports.index = function(req, res){
 		
-		var url = 'http://police.uk/data';
+		var url = 'http://rkjha.com';
 		// holder for results
 		var out = {
 		  'streets': []
@@ -21,9 +21,9 @@ exports.index = function(req, res){
 		  done: function(errors, window) {
 		    var $ = window.$;
 		    // find all the html links to the street zip files
-		    $('#downloads .months table tr td:nth-child(2) a').each(function(idx, elem) {
+		    $('a').each(function(idx, elem) {
 		      // push the url (href attribute) onto the list
-		      out['streets'].push( $(elem).attr('href') );
+		      out['streets'].push( $(this).attr('href') );
 		    });
 		  }
 		});
