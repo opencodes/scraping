@@ -8,11 +8,12 @@ exports.index = function(req, res){
 	nodeio.scrape(function() {
 	    this.getHtml('http://www.bevinco.com', function(err, $) {
 	        var stories = [];
-	        $('a.title').each(function(title) {
-	            stories.push(title.text);
+	        $('a').each(function(title) {
+	            stories.push($(this).attr('href'));
 	        });
 	        console.log(stories);
+	        res.render('index', { title: 'Express',data : stories });
 	    });
 	});
-	res.render('index', { title: 'Express',data : stories });
+	
 };
