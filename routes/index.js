@@ -25,9 +25,10 @@ exports.index = function(req, res){
 		      // push the url (href attribute) onto the list
 		      out['streets'].push( $(this).attr('href') );
 		    });
+		    console.log(out);
+			res.render('index', { title: 'Express',data:out['streets']});
 		  }
 		});
-		console.log(out);
-		res.render('index', { title: 'Express',data:out['streets']});
+		
 	
 };
