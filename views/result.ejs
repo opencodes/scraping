@@ -2,16 +2,91 @@
 <html>
   <head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
+		
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap-theme.min.css">
+ 		<link rel="stylesheet" href="/stylesheets/style.css">
+ 
   </head>
   <body>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Yello Page API</a>
+        </div>
+        
+      </div>
+    </div>
+
+    <div class="container">
+
     <h1><%= title %></h1>
-    <form  action="/search" method="post">
-    <input type="text" name="url" />
-    <input type="submit" />
-    </form>
-    <% for (var k in data) { %>
-			<h5><%= data[k].name %> :: <%= data[k].content %></h5>
-	<% } %>
+    <hr/>
+    <form class="form-inline" role="form" method="post" action="/yelloapi">
+		  <div class="form-group">
+		    <label class="sr-only" for="what">What</label>
+		    <input type="text" class="form-control" name="what" placeholder="What">
+		  </div>
+		  <div class="form-group">
+		    <label class="sr-only" for="where">Where</label>
+		    <input type="text" class="form-control" name="where" placeholder="where">
+		  </div>
+		 
+		  <button type="submit" class="btn btn-default">Search</button>
+		</form>
+		<h3>Data result for <strong><%= data.summary.what%></strong> in <strong><%= data.summary.where%></strong>.</h3>
+		<h4>Get Business List</h4>
+		<hr/>
+		<% if(data && data.listings){%>
+		<ul class="list-group">
+				
+				<% for(var k in data.listings) { %>
+            	<li class="list-group-item">
+	            	<span class="col-lg-2"><a href="/yelloapi/details/<%= data.listings[k].id%>" class="listing-id"> <%= data.listings[k].id%></a></span>
+	              <span class="col-lg-5"> <%= data.listings[k].name%></span>
+	              <span class="col-lg-5"><%= data.listings[k].address.street%>, <%= data.listings[k].address.city%>, <%= data.listings[k].address.prov%></span>
+              </li>
+         <% } %> 
+    </ul>
+    <% } %>
+    <h4>Get Business Details</h4>
+    <hr/>
+    <% if(details.categories && details.products){%>
+		<ul class="list-group">
+				
+				<% for(var k in details.categories) { %>
+            	<li class="list-group-item">
+	              <span class="col-lg-5"> <%= details.categories[k].name%></span>
+              </li>
+         <% } %> 
+         <% for(var k in details.products.weburl) { %>
+            	<li class="list-group-item">
+	              <span class="col-lg-5"> <%= details.products.weburl[k]%></span>
+              </li>
+         <% } %> 
+    </ul>
+    <% } %>
+    <h4>Get Business List</h4>
+		<hr/>
+		<% if(scrap){%>
+		<ul class="list-group">
+				
+				<% for(var k in scrap) { %>
+            	<li class="list-group-item">
+	              <span class="col-lg-5"> <%= scrap[k].name%> : <%= scrap[k].content%></span>
+              </li>
+         <% } %> 
+    </ul>
+    <% } %>
+    </div>
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
   </body>
 </html>

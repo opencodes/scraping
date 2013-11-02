@@ -5,3 +5,6 @@ body {
 a {
   color: #00b7ff;
 }
+.list-group-item {
+  height: 40px;
+}
