@@ -83,6 +83,7 @@ var search = {
 
 		for(var k in result){
 			var url = (result[k].details)?result[k].details.products.webUrl[0]:'';
+			result[k].url = url;	
 			console.log('Scrap URL: '+ url);
 			//If URL
 			if (url && url!='') {
