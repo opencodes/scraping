@@ -15,6 +15,7 @@ var search = {
 	findbusiness : function(req,res,next){
 		var url = yelloapi.FindBusiness(req.body.what,req.body.where);
 		request(url, function(error, response, body) {
+			if (!error && response.statusCode == 200) {
 			  var resultset = JSON.parse(body);
 			  //If listing 
 			  if(resultset.listings){	
@@ -28,8 +29,45 @@ var search = {
 				  req.apilog = {status:'danger',msg:'Error :' + err };
 				  next();			
 			  }
+			}
 				  
 		});
+	},
+	getbusinessdetails2 : function(req,res,next){
+		//If result
+		var results = req.apiresult;
+		if(!results || helper.obj_length(results) < 1){next();}
+		// iterate for each result
+		var counter = helper.obj_length(results);
+		console.log('getbusinessdetails : length = '+ counter);
+
+
+		for (var k in results) {
+        var result = results[k];
+        (function (results,result,k) {
+        console.log(k);
+		var url = yelloapi.GetBusinessDetails(result.address.prov,result.address.city,result.name,k);	
+
+        request(url, function(error, response, body) {	
+            console.log(body);
+            if (!error && response.statusCode == 200) {
+            	counter--;
+            	console.log(counter)
+            	var details = JSON.parse(body);
+            	console.log(details);
+            	//var url = (result[k].products && result[k].products.webUrl.length >= 1)?result[k].products.webUrl[0]:'';
+				//console.log(url);
+				//result[k].url = url;	
+				results[k].details = details;
+				if (counter === 0 ) {
+	              req.apiresult = result;
+		 		  next();
+	            }
+            }
+            
+          });
+        })(results,result,k);
+      }
 	},
 	/**
 	 * Get Business Details
@@ -44,27 +82,34 @@ var search = {
 		// iterate for each result
 		var counter = helper.obj_length(result);
 		console.log('getbusinessdetails : length = '+ counter);
+
 		for(var k in result){
 			var listings = result[k];
 			var url = yelloapi.GetBusinessDetails(listings.address.prov,listings.address.city,listings.name,k);			
 			request(url, function(error, response, body) {	
-				  var details = JSON.parse(body);	
-				  if(!error && body){
+				  
+				  if (!error && response.statusCode == 200) {
+				  		console.log('getbusinessdetails : iteration '+k);
+				  	  var details = JSON.parse(body);
+				  	  console.log(details);	
 				  	  if (!details.error) {	
-					  	result[k].details = JSON.parse(body);
-					  }					  			
-				  }else{								
-					   //console.log(err);
-					   result[k].details = null;
- 				  } 				  
- 				  console.log('getbusinessdetails : counter = '+counter);
+				  	  	
+				  	  	var url = (result[k].products && result[k].products.webUrl.length >= 1)?result[k].products.webUrl[0]:'';
+				  	  	console.log(url);
+				  	  	result[k].url = url;	
+					  	result[k].details = details;
+					  }	
 
- 				  if (counter==0) { 				  	
- 				  	console.log('getbusinessdetails : Details : Loop Complete'); 
- 				  	req.apiresult = result;
- 				  	next();
- 				  };
- 				  counter--;					  
+					  
+
+	 				  if (counter==0) { 				  	
+	 				  	//console.log('getbusinessdetails : Details : Loop Complete'); 
+	 				  	req.apiresult = result;
+	 				  	next();
+	 				  };
+	 				  counter--;				  			
+				  }
+ 				  					  
 			});
 		}	
 	},
@@ -83,11 +128,12 @@ var search = {
 
 		for(var k in result){
 			var url = (result[k].details)?result[k].details.products.webUrl[0]:'';
-			result[k].url = url;	
+			//result[k].url = url;	
 			console.log('Scrap URL: '+ url);
 			//If URL
 			if (url && url!='') {
 				request({ uri: url}, function(error, response, body) {
+				  if (!error && response.statusCode == 200) {
 				  var $ = cheerio.load(body);
 				  var links = [];
 				  $("meta").each(function() {
@@ -104,7 +150,8 @@ var search = {
 						console.log('Scrap : Loop Complete'); 
 						next();
 				  };
-				  counter --;					  
+				  counter --;
+				  }					  
 				});
 			}else{
 				if (counter==0) { 
@@ -132,10 +179,10 @@ var search = {
 	 */
 	renderresult : function(req,res){		
 		apiresult = (req.apiresult)?req.apiresult:{};
-		/*console.log('======================================= API RESULT =====================');
-		console.log(apiresult);
-		console.log('======================================= API LOG ========================');
-		console.log(req.apilog);*/
+		//console.log('======================================= API RESULT =====================');
+		//console.log(apiresult);
+		//console.log('======================================= API LOG ========================');
+		//console.log(req.apilog);
 		res.render('result',{
 			title:"Yellow Page API",
 			summary : req.apisummary,
