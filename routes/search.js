@@ -55,6 +55,7 @@ var search = {
 					  	  	var details = JSON.parse(body);
 					  	  	var id = details.id; 
 					  	  	var url = (details && details.products && details.products.webUrl.length >= 1) ? details.products.webUrl[0] : '';
+					  	  	console.log('getbusinessdetails : id'+id); 
 					  	  	results[id].url = url; 
 						  	results[id].details = details;
 						  if(k == list.length -1 ){
@@ -67,7 +68,7 @@ var search = {
 					});
 				}
 			}
-		}, 2000);      
+		}, 1000);      
 	},	
 	/**
 	 * Scrapping 
@@ -80,42 +81,50 @@ var search = {
 		var results  = req.apiresult;
 		var k = 0;
 		var x = list.length-1;
+		console.log(list);
+		function callrequest(k) {
+					var key = list[k];
+					console.log(key);
+					if( results[key].url && results[key].url.length > 0){
 
-			for (var i = 0; i <= x; i++) {
-					var key = list[i];
-					var listings = results[key]
-					if(listings.url && listings.url !=''){
+						request(results[key].url, function(error, response, body) {
 
-						request(listings.url, function(error, response, body) {	
-						  
 						  if (!error && response.statusCode == 200) {
-						  	   	  var $ = cheerio.load(body);
-								  var links = [];
-								  $("meta").each(function() {
-								  	if($(this).attr('name') && $(this).attr('name')!=='undefined'){
-								  		var meta = {name : $(this).attr('name'),content : $(this).attr('content')};		    
-								    	links.push(meta);		
-								  	}				    	    
-								  });
-								  var copyright = {name : 'copyright',content :$(':contains("�")').last().text().replace(/\s{2,}/g, ' ') };			  
-								  links.push(copyright);
-								  req.apiresult[key].meta = links;	
-								  if(key == list[x]){
-									  	console.log('scrap : complete moving next task'); 
-									  	next();
-								  }						  		 				  			  			
-						  }
-
+						  	   
+				  	  			var $ = cheerio.load(body);
+								var links = [];
+							  	$("meta").each(function() {
+							  	if($(this).attr('name') && $(this).attr('name')!=='undefined'){
+							  		var meta = {name : $(this).attr('name'),content : $(this).attr('content')};		    
+							    	links.push(meta);		
+							  	}				    	    
+							  	});
+								var copyright = {name : 'copyright',content :$(':contains("�")').last().text().replace(/\s{2,}/g, ' ') };			  
+							  	links.push(copyright);
+							  	results[key].meta = links;
+								  if(k == 0){
+								  	req.apiresult = results;
+								  	next();
+								  }else{
+						  			k --;
+				 				    callrequest(k);	
+								  }							  		  			
+						  }		 				  					  
 						});
-
 					}else{
-						if(key == list[x]){
-						  	console.log('scrap : complete moving next task'); 
-						  	next();
-						}
+						console.log('Invalid URL');
+						if(k==0){
+							req.apiresult = results;
+							next();
+						}else{
+							k--;
+							callrequest(k);	
+						}						
 					}
-					
-			};		
+
+			}
+			callrequest(x);
+
 	},
 	/**
 	 * Render
