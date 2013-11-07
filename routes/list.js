@@ -7,15 +7,14 @@ var helper = require('../lib/helper');
 
 var listresult = {
 	checkDelay : function(req,res,next)	{
-		var urls = ['http://getbootstrap.com/','http://google.com/','http://facebook.com/','http://twitter.com/'
-		,'http://linkedin.com/','',''];
-		var x = urls.length -1;console.log('URL Array length '+x);
+		var urls = [ {id:'1',url:''},{id:'2',url:'http://www.spider-barberchairs.com'},{id:'3',url:''},{id:'4',url:'http://www.9058445113.yp.ca'},{id:'5',url:'http://www.blackandwhitebarbers.com'} ];
+		var x = urls.length -1;console.log(urls);
 		function callrequest(k,urls) {
+					console.log(k);
+					if( urls[k].url.length > 0){
 
-					if( urls[k].length > 0){
-
-						request(urls[k], function(error, response, body) {
-
+						request(urls[k].url, function(error, response, body) {
+							console.log(error);
 						  if (!error && response.statusCode == 200) {
 						  	   
 				  	  			var $ = cheerio.load(body);
@@ -28,13 +27,20 @@ var listresult = {
 							  	});
 								var copyright = {name : 'copyright',content :$(':contains("�")').last().text().replace(/\s{2,}/g, ' ') };			  
 							  	links.push(copyright);
-								  console.log(urls[k]);
+								  console.log(urls[k].url);
 								  if(k == 0){
 								  	next();
 								  }else{
 						  			k --;
 				 				    callrequest(k,urls);	
 								  }							  		  			
+						  }else{
+							  if(k == 0){
+							  	next();
+							  }else{
+					  			k --;
+			 				    callrequest(k,urls);	
+							  }
 						  }		 				  					  
 						});
 					}else{

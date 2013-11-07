@@ -20,6 +20,7 @@ var search = {
 			  //If listing 
 			  if(resultset.listings){	
 				  if(resultset.listings.length == 0){ req.apilog = {status:'danger',msg:'No result found'}; next();}
+				  req.apiurls = [];
 				  req.apisummary = resultset.summary;
 				  req.listings   = helper.getKeysArray(resultset.listings,'id');
 				  req.apiresult  = helper.arr_to_obj(resultset.listings,'id');
@@ -56,7 +57,8 @@ var search = {
 					  	  	var id = details.id; 
 					  	  	var url = (details && details.products && details.products.webUrl.length >= 1) ? details.products.webUrl[0] : '';
 					  	  	console.log('getbusinessdetails : id'+id); 
-					  	  	results[id].url = url; 
+					  	  	results[id].url = url;
+					  	    req.apiurls.push(url);
 						  	results[id].details = details;
 						  if(k == list.length -1 ){
 						  	console.log('getbusinessdetails : complete moving next task'); 
@@ -79,16 +81,14 @@ var search = {
 	scrap : function(req,res,next){
 		var list = req.listings;
 		var results  = req.apiresult;
-		var k = 0;
 		var x = list.length-1;
 		console.log(list);
 		function callrequest(k) {
-					var key = list[k];
-					console.log(key);
+					var key = list[k];console.log('K='+k);
+					console.log('Key == '+key);
 					if( results[key].url && results[key].url.length > 0){
 
 						request(results[key].url, function(error, response, body) {
-
 						  if (!error && response.statusCode == 200) {
 						  	   
 				  	  			var $ = cheerio.load(body);
@@ -106,18 +106,26 @@ var search = {
 								  	req.apiresult = results;
 								  	next();
 								  }else{
-						  			k --;
+						  			k --;console.log('K==in'+k);
 				 				    callrequest(k);	
 								  }							  		  			
-						  }		 				  					  
+						  }else{
+							  var meta = [{name : 'Error',content :error.code }];	
+							  results[key].meta = links;
+							  if(k == 0){
+							  	next();
+							  }else{
+					  			k --;
+			 				    callrequest(k);	
+							  }
+						  } 				  					  
 						});
 					}else{
-						console.log('Invalid URL');
-						if(k==0){
+						if(k==0){console.log('K==next'+k);
 							req.apiresult = results;
 							next();
 						}else{
-							k--;
+							k--;console.log('K==='+k);
 							callrequest(k);	
 						}						
 					}
