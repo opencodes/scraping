@@ -41,12 +41,30 @@
 		  <span class="input-group-addon">http://</span>
 		  <input type="text" class="form-control" name="urls">
 		</div>
-		<br>
-		  
-		  <button type="submit" class="btn btn-default">Search</button>
-		</form>
+		  <br/>
+		  <button type="submit" class="btn btn-default">Check PR</button>
+		</form><br/>
 	<% if (typeof(pagerank)!='undefined') {%>
-	<h1>Pagerank : <%= pagerank %></h1>
+	<div class="row">
+	  <div class="col-md-2">Web Page URL : </div>
+	  <div class="col-md-8"><%= weburl %></div>
+	  <div class="col-md-2"></div>
+	</div>
+	<br/>
+	<div class="row">
+	  <div class="col-md-2">The Page Rank : </div>
+	  <div class="col-md-8">
+	  	<div class="progress">
+		  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<%= pagerank %>0" aria-valuemin="0" aria-valuemax="100" style="width: <%= pagerank %>0%">
+		  </div>
+		</div>
+	</div>
+	  <div class="col-md-2"><%= pagerank %>/10</div>
+	</div>
+	<small>( the page rank value is <strong><%= pagerank %></strong> from <strong>10</strong> possible points)</small>
+	
+	
+	
 	<% }%>
     </div><!-- /.container -->
     

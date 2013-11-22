@@ -21,7 +21,7 @@ module.exports = function(app){
 			  url: 'http://'+req.body.urls
 			}, function(err, r) {
 			    console.log(err, r);
-			    res.render('google',{ title: 'Google Page Rank',pagerank:r});
+			    res.render('google',{ title: 'Google Page Rank',pagerank:r,weburl:req.body.urls});
 		});
 		
 	});
